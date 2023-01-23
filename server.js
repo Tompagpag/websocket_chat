@@ -17,9 +17,18 @@ const server = http.createServer((req,res) =>
 
 server.listen(9000, () => { console.log(`http://localhost:9000`); });
 
+const users = [];
+
 const io = new Server(server);
 io.on('connection', (socket) => {
-    socket.on('message', (message) => {
-        console.log(message)
-    })
+    socket.on('client:user:pseudo', (pseudo) => {
+        if(users.includes(pseudo)) {
+            socket.emit('server:user:pseudo_exists');
+        }
+        else {
+            socket.pseudo = pseudo;
+            users.push(pseudo);
+            socket.emit('server:user:connected');
+        }
+    });
 });
