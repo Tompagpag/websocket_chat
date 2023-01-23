@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/Tompagpag/websocket_chat/issues"
   },
-  "homepage": "https://github.com/Tompagpag/websocket_chat#readme"
+  "homepage": "https://github.com/Tompagpag/websocket_chat#readme",
+  "dependencies": {
+    "finalhandler": "^1.2.0",
+    "serve-static": "^1.15.0",
+    "socket.io": "^4.5.4"
+  }
 }
