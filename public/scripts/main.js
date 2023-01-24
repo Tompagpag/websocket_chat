@@ -32,7 +32,7 @@ function uiShowChat(show = true) {
 // déconnexion
 function disconnectUi() {
     // on envoie l'information de déconnexion au serveur WebSocket
-    socket.emit('client:user:ui_disconnect');
+    socket.emit('client:user:disconnect');
     // On modifie l'interface
     uiShowChat(false);
 }
