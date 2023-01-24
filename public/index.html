@@ -12,15 +12,20 @@
 
 <body>
   <nav class="navbar">
-    <a href="/">
-      <img src="/images/logo-chat.png" alt="logo marque chat sockets">
-    </a>
+    <div class="img-brand">
+      <a href="/">
+        <img src="/images/logo-chat.png" alt="logo marque chat sockets">
+      </a>
+    </div>
+    <div class="nav-link">
+      <a href="/">Accueil</a>
+    </div>
   </nav>
     <div class="not_authenticated">
       <h2>Se connecter</h2>
       <button class="btn-ghost" id="btnConnect">Se connecter sans s'authentifier</button>
     </div>
-    <div class="container authenticated hide">
+    <div class="authenticated hide">
       <button class="btn-ghost" id="btnDisconnect">Se déconnecter</button>
 
       <h2>Le chat</h2>
@@ -37,7 +42,7 @@
       <li></li>
     </template>
   <script src="/socket.io/socket.io.min.js"></script>
-  <script src="/scripts/main.js"></script>
+  <script src="scripts/main.js" type="module"></script>
 </body>
 
 </html>

@@ -1,5 +1,25 @@
+body {
+  margin: 0;
+  background-color: white;
+}
+
 .hide {
-  display: none;
+  transform: scale(0);
+}
+
+.authenticated, .not_authenticated {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: initial;
+  justify-content: space-around;
+  height: 5rem;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2)
 }
 
 
