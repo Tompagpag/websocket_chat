@@ -10,15 +10,31 @@
 </head>
 
 <body>
-  <div class="not_authenticated">
-    <h2>Se connecter</h2>
-    <button id="btnConnect">Se connecter sans s'authentifier</button>
-  </div>
-  <div class="authenticated hide">
-    <h2>Le chat</h2>
-    <p>L'interface de mon chat</p>
-  </div>
+  <nav class="navbar">
+    <a href="/">
+      <img src="/images/logo-chat.png" alt="logo marque chat sockets">
+    </a>
+  </nav>
+    <div class="not_authenticated">
+      <h2>Se connecter</h2>
+      <button id="btnConnect">Se connecter sans s'authentifier</button>
+    </div>
+    <div class="container authenticated hide">
+      <button id="btnDisconnect">Se déconnecter</button>
 
+      <h2>Le chat</h2>
+      <div class="row">
+        <ul id="listingChannels">
+
+        </ul>
+        <div></div>
+        <ul id="listingUsers"></ul>
+      </div>
+    </div>
+
+    <template id="usersTpl">
+      <li></li>
+    </template>
   <script src="/socket.io/socket.io.min.js"></script>
   <script src="/scripts/main.js"></script>
 </body>
