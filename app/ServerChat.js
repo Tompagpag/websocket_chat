@@ -1,4 +1,5 @@
 import User from './User.js'
+import Channel from './Channel.js'
 import { Server } from "socket.io";
 
 
@@ -7,6 +8,11 @@ export default class ServerChat {
     constructor(serverHttp) {
       this.users = [];
       this.io = new Server(serverHttp);
+      this.channels = [
+          new Channel('Général'),
+          new Channel('Programmation'),
+          new Channel('Hadès'),
+      ];
       //this.io.on('connection', function(socket) { this.onConnection.bind(this, socket)});
       // Détection d'une nouvelle connexion au socket
       this.io.on('connection', (socket) => { this.onConnection(socket); } );
@@ -39,6 +45,8 @@ export default class ServerChat {
             socket.emit('server:user:connected');
             // Envoie la liste des utilisateurs à tous les sockets
             this.io.emit('server:user:list', this.users.map(user => user.pseudo));
+            // Envoie la liste des channels
+            socket.emit('server:channel:list', this.channels.map(channel => channel.name));
         }
     }
 

@@ -65,6 +65,19 @@ export default class UserInterface {
         }
     }
 
+    listChannels(channels) {
+        document.querySelector("#listingChannels").innerHTML = "";
+        if ("content" in document.createElement("template")) {
+          let template = document.querySelector("#channelsTpl");
+          channels.forEach(name => {
+              let clone = document.importNode(template.content, true);
+              clone.querySelector("li").innerHTML = name;
+              document.querySelector("#listingChannels").appendChild(clone);
+            });
+        }
+    }
+
+
     messagesUi(e) {
         // si l'utilisateur envoi le message (touche entrée)
         if(e.keyCode == 13) {

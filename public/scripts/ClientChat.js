@@ -20,6 +20,7 @@ export default class ClientChat {
         // Ecoute le retour de la liste complete des utilisateurs
         // socket.on('server:user:list', (users) => this.UI.listingUsers(users)); // (equivalent à la ligne ci dessous)
         this.socket.on('server:user:list', this.UI.listingUsers);
+        this.socket.on('server:channel:list', this.UI.listChannels);
         this.socket.on('server:message:send', (messages) => {
             this.UI.listMessages(messages);
         });

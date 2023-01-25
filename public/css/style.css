@@ -43,18 +43,25 @@ body {
 .grid {
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr;
   margin: 2rem;
 }
 
 .row {
-  background: #ccc;
+  background-image: url("https://uploads-ssl.webflow.com/5a9ee6416e90d20001b20038/635a951d2168e95098b1bacd_horizontal%20(28).svg");
+  background-size: cover;
   color: black;
   text-align: center;
   padding: 10px;
-  border-radius: 3px;
+  border-radius: 10px;
   height: 25rem;
 
+}
+
+.grid-title {
+  border: 1px solid black;
+  border-radius: 3px;
+  background: white;
 }
 
 .chat-window {
