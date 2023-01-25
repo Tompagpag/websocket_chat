@@ -1,20 +1,50 @@
 
 export default class UserInterface {
-
-    listenInterface()
-    {
+    listenInterface() {
         //----------------------------------------------------------
         // Ecoutes sur l'interface
         //----------------------------------------------------------
         // quand on clique sur le bouton "Se connecter sans s'authentifier"
         document.querySelector("#btnConnect").addEventListener('click', this.pseudoChoice );
+        document.querySelector("#btnDirectName").addEventListener('click', this.pseudoChoice2);
+
+        // quand on soumet un message
+        document.querySelector('#createMessage').addEventListener('keyup', this.sendMessage);
+
         // quand on clique sur le bouton "Se déconnecter"
         document.querySelector("#btnDisconnect").addEventListener('click', this.disconnectUi.bind(this) );
-        document.querySelector('#createMessage').addEventListener('keyup', this.messagesUi);
     }
 
-    pseudoChoice(alertPseudo = false)
-    {
+    sendMessage(e) {
+        // si l'utilisateur envoi le message (touche entrée)
+        if(e.keyCode == 13) {
+            let message = document.querySelector('#createMessage').value;
+            document.dispatchEvent(new CustomEvent('local:message:send', {detail : { message }} ));
+            // on vide le champs du message
+            document.querySelector('#createMessage').value = '';
+        }
+    }
+
+    listMessages(message) {
+        if ("content" in document.createElement("template")) {
+           let template = document.querySelector("#messagesTpl");
+           let clone = document.importNode(template.content, true);
+           clone.querySelector("td.time").innerText = message.time;
+           clone.querySelector("td.author").innerText = message.author;
+           clone.querySelector("td.message").innerText = message.message;
+           document.querySelector("#listingMessages").appendChild(clone);
+        }
+    }
+
+
+    pseudoChoice2(e) {
+        let user = document.querySelector('#directName').value;
+        if(user !== '')  {
+            document.dispatchEvent(new CustomEvent('local:user:pseudo', {detail : { user }}));
+        }
+    }
+
+    pseudoChoice(alertPseudo = false) {
         if(alertPseudo === true) alert(`Choisissez un autre pseudo, celui ci est déjà utilisé !`);
 
         let user;
@@ -45,6 +75,7 @@ export default class UserInterface {
         }
     }
 
+
     // déconnexion
     disconnectUi() {
         // on envoie l'information de déconnexion au serveur WebSocket
@@ -52,6 +83,7 @@ export default class UserInterface {
         // On modifie l'interface
         this.uiShowChat(false);
     }
+
 
     listingUsers(users) {
         document.querySelector("#listingUsers").innerHTML = "";
@@ -65,40 +97,31 @@ export default class UserInterface {
         }
     }
 
-    listChannels(channels) {
+    listingChannels(channels) {
         document.querySelector("#listingChannels").innerHTML = "";
         if ("content" in document.createElement("template")) {
-          let template = document.querySelector("#channelsTpl");
-          channels.forEach(name => {
-              let clone = document.importNode(template.content, true);
-              clone.querySelector("li").innerHTML = name;
-              document.querySelector("#listingChannels").appendChild(clone);
+           let template = document.querySelector("#channelsTpl");
+           channels.forEach(name => {
+               let clone = document.importNode(template.content, true);
+               clone.querySelector("li").innerText = name;
+               document.querySelector("#listingChannels").appendChild(clone);
             });
+            // par défaut on est sur le salon Général
+            document.querySelector('#listingChannels li').classList.add('active');
+            this.listenChannelChange();
         }
     }
 
-
-    messagesUi(e) {
-        // si l'utilisateur envoi le message (touche entrée)
-        if(e.keyCode == 13) {
-          let message = document.querySelector('#createMessage').value;
-          document.dispatchEvent(new CustomEvent(
-              'local:message:send', {detail : { message }}
-          ));
-          // on vide le champs du message
-          document.querySelector('#createMessage').value = '';
-      }
+    listenChannelChange()  {
+        document.querySelectorAll('#listingChannels li').forEach((element) => {
+            element.addEventListener('click', (e) => {
+                let channel = e.currentTarget.textContent;
+                document.querySelectorAll('#listingChannels li').forEach(el => el.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                document.dispatchEvent(new CustomEvent(
+                    'local:channel:change', {detail : { channel }}
+                ));
+            })
+        });
     }
-
-    listMessages(message) {
-        if ("content" in document.createElement("template")) {
-            let template = document.querySelector("#messagesTpl");
-            let clone = document.importNode(template.content, true);
-            clone.querySelector("td.time").innerHTML = message.time;
-            clone.querySelector("td.author").innerHTML = message.author;
-            clone.querySelector("td.message").innerHTML = message.message;
-            document.querySelector("#listingMessages").appendChild(clone);
-        }
-      }
-
 }

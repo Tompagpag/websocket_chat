@@ -77,3 +77,15 @@ li {
 ul {
   padding: 0;
 }
+
+.messages-wrapper {
+  overflow: auto;
+}
+
+.active {
+  font-weight: bold;
+}
+
+#listingChannels  {
+  cursor: pointer;
+}

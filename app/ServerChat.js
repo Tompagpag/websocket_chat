@@ -19,15 +19,44 @@ export default class ServerChat {
     }
 
     onConnection(socket) {
-      console.log(`client ${socket.id} is connected via WebSockets   `);
         // écouteur d'évenement sur l'envoi d'un choix de pseudo
         socket.on('client:user:pseudo', (pseudo) => this.choicePseudo(socket, pseudo) );
+    }
+
+    listenEventOnlyIfConnected(socket) {
+        // réception d'un message
+        socket.on('client:message:send', this.receiveMessage.bind(this, socket));
         // écouteur d'évenement sur le bouton de déconnexion sur l'interface
         socket.on('client:user:ui_disconnect',  () => this.disconnectSocket(socket));
         // écouteur d'évenement sur la déconnexion du socket (actualisation de page, fermeture d'onglet / navigateur)
         socket.on('disconnect', () => this.disconnectSocket(socket));
-        // réception d'un message
-        socket.on('client:message:send', this.receiveMessage.bind(this, socket));
+        // écouteur d'évenement sur le changement de channel
+        socket.on('client:channel:change', this.joinChannel.bind(this, socket));
+    }
+
+    joinChannel(socket, channelName) {
+        if(typeof socket.user.channel != 'undefined' && socket.user.channel === channelName) return;
+        // on vérifie que le salon existe
+        let index = this.channels.findIndex(channel => channel.name == channelName);
+        if(index != -1) {
+            if(typeof socket.user.channel != 'undefined') {
+                socket.leave(socket.user.channel);
+                console.log(`pseudo : ${socket.user.pseudo} a quitté le salon ${socket.user.channel}`);
+            }
+            socket.user.channel = channelName;
+            socket.join(socket.user.channel);
+            console.log(`pseudo : ${socket.user.pseudo} a rejoint le salon ${socket.user.channel}`);
+        } else {
+            console.log(`le client ${socket.id} (pseudo : ${socket.user.pseudo}) a tenté une connexion sur un salon inexistant`);
+        }
+    }
+
+    receiveMessage(socket, message) {
+        let author = socket.user.pseudo;
+        let date = new Date();
+        let min = date.getMinutes();
+        let time = date.getHours() +':'+(min < 10 ? "0"+min : min);
+        this.io.in(socket.user.channel).emit('server:message:send', { author, time, message });
     }
 
     choicePseudo(socket, pseudo) {
@@ -45,8 +74,12 @@ export default class ServerChat {
             socket.emit('server:user:connected');
             // Envoie la liste des utilisateurs à tous les sockets
             this.io.emit('server:user:list', this.users.map(user => user.pseudo));
-            // Envoie la liste des channels
+            // Envoie la liste des channels au socket courant
             socket.emit('server:channel:list', this.channels.map(channel => channel.name));
+            // Placer l'utilisateur qui vient de "se connecter" on lui fait rejoindre le salon "Général"
+            this.joinChannel(socket, 'Général');
+            // Les événements possible uniquement quand l'utilisateur est connecté
+            this.listenEventOnlyIfConnected(socket);
         }
     }
 
@@ -64,12 +97,4 @@ export default class ServerChat {
             }
         }
     }
-    receiveMessage(socket, message) {
-        let author = socket.user.pseudo;
-        let date = new Date();
-        let min = date.getMinutes();
-        let time = date.getHours() +':'+(min < 10 ? "0"+min : min);
-        this.io.emit('server:message:send', { author, time, message });
-    }
-
 }
