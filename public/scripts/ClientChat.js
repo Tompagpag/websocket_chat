@@ -20,18 +20,25 @@ export default class ClientChat {
         // Ecoute le retour de la liste complete des utilisateurs
         // socket.on('server:user:list', (users) => this.UI.listingUsers(users)); // (equivalent à la ligne ci dessous)
         this.socket.on('server:user:list', this.UI.listingUsers);
+        this.socket.on('server:message:send', (messages) => {
+            this.UI.listMessages(messages);
+        });
     }
 
     //----------------------------------------------------------
     // Ecouteur d'évènements locaux (CustomEvent)
     //----------------------------------------------------------
     transmitUiServer() {
-        document.addEventListener('local:user:pseudo', (e) => {
-            this.socket.emit('client:user:pseudo', e.detail.user);
+        document.addEventListener('local:user:pseudo', (event) => {
+            this.socket.emit('client:user:pseudo', event.detail.user);
         });
 
-        document.addEventListener('local:user:ui_disconnect', (e) => {
+        document.addEventListener('local:user:ui_disconnect', () => {
             this.socket.emit('client:user:ui_disconnect');
         });
+        document.addEventListener('local:message:send', (event) => {
+            this.socket.emit('client:message:send', event.detail.message);
+        });
+
     }
 }

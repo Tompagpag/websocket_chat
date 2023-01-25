@@ -10,6 +10,7 @@ export default class UserInterface {
         document.querySelector("#btnConnect").addEventListener('click', this.pseudoChoice );
         // quand on clique sur le bouton "Se déconnecter"
         document.querySelector("#btnDisconnect").addEventListener('click', this.disconnectUi.bind(this) );
+        document.querySelector('#createMessage').addEventListener('keyup', this.messagesUi);
     }
 
     pseudoChoice(alertPseudo = false)
@@ -63,4 +64,28 @@ export default class UserInterface {
             });
         }
     }
+
+    messagesUi(e) {
+        // si l'utilisateur envoi le message (touche entrée)
+        if(e.keyCode == 13) {
+          let message = document.querySelector('#createMessage').value;
+          document.dispatchEvent(new CustomEvent(
+              'local:message:send', {detail : { message }}
+          ));
+          // on vide le champs du message
+          document.querySelector('#createMessage').value = '';
+      }
+    }
+
+    listMessages(message) {
+        if ("content" in document.createElement("template")) {
+            let template = document.querySelector("#messagesTpl");
+            let clone = document.importNode(template.content, true);
+            clone.querySelector("td.time").innerHTML = message.time;
+            clone.querySelector("td.author").innerHTML = message.author;
+            clone.querySelector("td.message").innerHTML = message.message;
+            document.querySelector("#listingMessages").appendChild(clone);
+        }
+      }
+
 }

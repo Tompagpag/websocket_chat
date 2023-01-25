@@ -8,9 +8,7 @@ body {
 }
 
 .authenticated, .not_authenticated {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+  text-align: center;
 }
 
 .navbar {
@@ -35,4 +33,40 @@ body {
 
 .btn-ghost:hover {
   opacity: 1;
+}
+
+
+.connection-btn {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 2fr 1fr;
+  margin: 2rem;
+}
+
+.row {
+  background: #ccc;
+  color: black;
+  text-align: center;
+  padding: 10px;
+  border-radius: 3px;
+  height: 25rem;
+
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+li {
+  list-style: none;
+}
+
+ul {
+  padding: 0;
 }

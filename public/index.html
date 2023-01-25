@@ -17,27 +17,47 @@
         <img src="/images/logo-chat.png" alt="logo marque chat sockets">
       </a>
     </div>
-    <div class="nav-link">
-      <a href="/">Accueil</a>
+    <div class="connection-btn">
+      <div class="not_authenticated">
+        <button class="btn-ghost" id="btnConnect">Se connecter sans s'authentifier</button>
+      </div>
+      <div class="authenticated hide">
+        <button class="btn-ghost" id="btnDisconnect">Se déconnecter</button>
+      </div>
+
     </div>
   </nav>
-    <div class="not_authenticated">
-      <h2>Se connecter</h2>
-      <button class="btn-ghost" id="btnConnect">Se connecter sans s'authentifier</button>
-    </div>
+
     <div class="authenticated hide">
-      <button class="btn-ghost" id="btnDisconnect">Se déconnecter</button>
-
-      <h2>Le chat</h2>
-      <div class="row">
-        <ul id="listingChannels">
-
-        </ul>
-        <div></div>
-        <ul id="listingUsers"></ul>
+      <h2>Chat sockets</h2>
+      <div class="grid">
+        <div class="row">
+          <p>Les channels</p>
+          <ul id="listingChannels">
+          </ul>
+        </div>
+        <div class="row chat-window">
+          <p>Les messages</p>
+            <table id="listingMessages"></table>
+            <div>
+              <input type="text" id="createMessage"/>
+              <button id="sendMessage">Envoyer</button>
+            </div>
+        </div>
+        <div class="row">
+          <p>Les utilisateurs</p>
+          <ul id="listingUsers"></ul>
+        </div>
       </div>
     </div>
 
+    <template id="messagesTpl">
+      <tr>
+        <td class="time"></td>
+        <td class="author"></td>
+        <td class="message"></td>
+      </tr>
+    </template>
     <template id="usersTpl">
       <li></li>
     </template>

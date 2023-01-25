@@ -20,6 +20,8 @@ export default class ServerChat {
         socket.on('client:user:ui_disconnect',  () => this.disconnectSocket(socket));
         // écouteur d'évenement sur la déconnexion du socket (actualisation de page, fermeture d'onglet / navigateur)
         socket.on('disconnect', () => this.disconnectSocket(socket));
+        // réception d'un message
+        socket.on('client:message:send', this.receiveMessage.bind(this, socket));
     }
 
     choicePseudo(socket, pseudo) {
@@ -54,4 +56,12 @@ export default class ServerChat {
             }
         }
     }
+    receiveMessage(socket, message) {
+        let author = socket.user.pseudo;
+        let date = new Date();
+        let min = date.getMinutes();
+        let time = date.getHours() +':'+(min < 10 ? "0"+min : min);
+        this.io.emit('server:message:send', { author, time, message });
+    }
+
 }
