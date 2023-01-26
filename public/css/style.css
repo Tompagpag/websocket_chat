@@ -67,7 +67,8 @@ body {
 .chat-window {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  position: relative;
 }
 
 li {
@@ -80,6 +81,10 @@ ul {
 
 .messages-wrapper {
   overflow: auto;
+  display: flex;
+  justify-content: flex-end;
+  /* height: 19.5rem; */
+  padding-right: 0.5rem;
 }
 
 .active {
@@ -88,4 +93,23 @@ ul {
 
 #listingChannels  {
   cursor: pointer;
+}
+
+.message {
+  background: white;
+  border: 1px solid lightgray;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+  box-shadow: 0 1px .5px rgba(11, 20, 26, .13);
+}
+
+.author {
+  color: white;
+  font-weight: bold;
+}
+
+.send-input {
+  position: absolute;
+  top: 90%;
+  right: 33%;
 }

@@ -6,7 +6,7 @@ export default class UserInterface {
         //----------------------------------------------------------
         // quand on clique sur le bouton "Se connecter sans s'authentifier"
         document.querySelector("#btnConnect").addEventListener('click', this.pseudoChoice );
-        document.querySelector("#btnDirectName").addEventListener('click', this.pseudoChoice2);
+        // document.querySelector("#btnDirectName").addEventListener('click', this.pseudoChoice2);
 
         // quand on soumet un message
         document.querySelector('#createMessage').addEventListener('keyup', this.sendMessage);
@@ -25,24 +25,28 @@ export default class UserInterface {
         }
     }
 
-    listMessages(message) {
-        if ("content" in document.createElement("template")) {
-           let template = document.querySelector("#messagesTpl");
-           let clone = document.importNode(template.content, true);
-           clone.querySelector("td.time").innerText = message.time;
-           clone.querySelector("td.author").innerText = message.author;
-           clone.querySelector("td.message").innerText = message.message;
-           document.querySelector("#listingMessages").appendChild(clone);
+    listMessages(messages, clean = false) {
+      if(clean) document.querySelector("#listingMessages").innerHTML = '';
+      if ("content" in document.createElement("template")) {
+          let template = document.querySelector("#messagesTpl");
+          messages.forEach((message) => {
+              let clone = document.importNode(template.content, true);
+              clone.querySelector("td.time").innerHTML = message.time;
+              clone.querySelector("td.author").innerHTML = message.author;
+              clone.querySelector("td.message").innerHTML = message.message;
+              document.querySelector("#listingMessages").appendChild(clone);
+            });
         }
     }
 
 
-    pseudoChoice2(e) {
-        let user = document.querySelector('#directName').value;
-        if(user !== '')  {
-            document.dispatchEvent(new CustomEvent('local:user:pseudo', {detail : { user }}));
-        }
-    }
+
+    // pseudoChoice2(e) {
+    //     let user = document.querySelector('#directName').value;
+    //     if(user !== '')  {
+    //         document.dispatchEvent(new CustomEvent('local:user:pseudo', {detail : { user }}));
+    //     }
+    // }
 
     pseudoChoice(alertPseudo = false) {
         if(alertPseudo === true) alert(`Choisissez un autre pseudo, celui ci est déjà utilisé !`);

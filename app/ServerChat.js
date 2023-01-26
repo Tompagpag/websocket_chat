@@ -1,7 +1,7 @@
 import User from './User.js'
 import Channel from './Channel.js'
 import { Server } from "socket.io";
-
+import Message from './Message.js';
 
 export default class ServerChat {
 
@@ -35,29 +35,43 @@ export default class ServerChat {
     }
 
     joinChannel(socket, channelName) {
-        if(typeof socket.user.channel != 'undefined' && socket.user.channel === channelName) return;
-        // on vérifie que le salon existe
-        let index = this.channels.findIndex(channel => channel.name == channelName);
-        if(index != -1) {
-            if(typeof socket.user.channel != 'undefined') {
-                socket.leave(socket.user.channel);
-                console.log(`pseudo : ${socket.user.pseudo} a quitté le salon ${socket.user.channel}`);
-            }
-            socket.user.channel = channelName;
-            socket.join(socket.user.channel);
-            console.log(`pseudo : ${socket.user.pseudo} a rejoint le salon ${socket.user.channel}`);
+      // on vérifie que le salon existe
+      let index = this.channels.findIndex(channel => channel.name == channelName);
+      if(index != -1) {
+          socket.leave(socket.user.channel);
+          socket.user.channel = channelName;
+          socket.join(socket.user.channel);
+          let channel = this.channels[index];
+          let messages = channel.messages.map((message) => { return {
+              "author" : message.author,
+              "message" : message.message,
+              "time" : message.time,
+          }});
+          socket.emit('server:messages:send', messages);
         } else {
-            console.log(`le client ${socket.id} (pseudo : ${socket.user.pseudo}) a tenté une connexion sur un salon inexistant`);
+            console.log(`le client ${socket.id} (pseudo :${socket.user.pseudo})
+                a tenté une connexion sur un salon inexistant`
+          );
         }
     }
 
+
     receiveMessage(socket, message) {
-        let author = socket.user.pseudo;
-        let date = new Date();
-        let min = date.getMinutes();
-        let time = date.getHours() +':'+(min < 10 ? "0"+min : min);
-        this.io.in(socket.user.channel).emit('server:message:send', { author, time, message });
+        let msg = new Message(socket.user.pseudo, message);
+        // Nous allons le stocker dans l'objet channel correspondant
+        let channel = this.channels.find(
+            channel => channel.name == socket.user.channel
+        );
+        channel.addMessage(msg);
+
+
+        this.io.in(socket.user.channel).emit('server:message:send', {
+            "author" : msg.author,
+            "message" : msg.message,
+            "time" : msg.time
+        });
     }
+
 
     choicePseudo(socket, pseudo) {
         // vérifie si le pseudo existe déjà dans notre liste d'utilisateur

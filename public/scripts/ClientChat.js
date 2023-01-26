@@ -19,8 +19,14 @@ export default class ClientChat {
         // Ecoute le retour de connexion validée
         this.socket.on('server:user:connected', () => { this.UI.uiShowChat(); } );
 
-        // Ecoute la réception de message
-        this.socket.on('server:message:send', this.UI.listMessages);
+        // réception d’un message
+        this.socket.on('server:message:send', (message) => {
+            this.UI.listMessages([message], false);
+        });
+        // réception de plusieurs messages (changement de channels)
+        this.socket.on('server:messages:send', (messages) => {
+            this.UI.listMessages(messages, true);
+        });
 
         // Ecoute de la liste des channels
         this.socket.on('server:channel:list', this.UI.listingChannels.bind(this.UI));
