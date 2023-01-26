@@ -1,5 +1,10 @@
 
 export default class UserInterface {
+
+    constructor() {
+      this.typing = false;
+    }
+
     listenInterface() {
         //----------------------------------------------------------
         // Ecoutes sur l'interface
@@ -19,9 +24,27 @@ export default class UserInterface {
         // si l'utilisateur envoi le message (touche entrée)
         if(e.keyCode == 13) {
             let message = document.querySelector('#createMessage').value;
-            document.dispatchEvent(new CustomEvent('local:message:send', {detail : { message }} ));
+            document.dispatchEvent(new CustomEvent('local:message:send', {detail :{message}}));
             // on vide le champs du message
             document.querySelector('#createMessage').value = '';
+            // l'utilisateur arrête la saisie
+            this.typing = false;
+            window.clearTimeout(this.timerTyping);
+            document.dispatchEvent(new CustomEvent('local:message:typing', {detail : { status : this.typing }}));
+        } else {
+            if(this.typing !== true) {
+                this.typing = true;
+                document.dispatchEvent(new CustomEvent('local:message:typing', {detail : { status : this.typing }}));
+
+            } else {
+                // sinon on supprime le précédent timer
+                window.clearTimeout(this.timerTyping);
+            }
+            // on crée un nouveau timer au bout de 3 secondes on changera le statut à false
+            this.timerTyping = window.setTimeout(() => {
+                this.typing = false;
+                document.dispatchEvent(new CustomEvent('local:message:typing', {detail : { status : this.typing }}));
+            }, 3000);
         }
     }
 
@@ -38,8 +61,6 @@ export default class UserInterface {
             });
         }
     }
-
-
 
     // pseudoChoice2(e) {
     //     let user = document.querySelector('#directName').value;
@@ -128,4 +149,12 @@ export default class UserInterface {
             })
         });
     }
+
+    listUsersTyping(users) {
+        document.querySelector("#typingUsers").innerHTML = '';
+        if(users.length > 0) {
+            document.querySelector("#typingUsers").innerHTML = `${users.join(', ')} ${(users.length > 1 ? " sont" :  " est")} en train d'écrire`;
+        }
+    }
+
 }

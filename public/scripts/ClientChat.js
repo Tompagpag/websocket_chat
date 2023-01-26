@@ -23,6 +23,7 @@ export default class ClientChat {
         this.socket.on('server:message:send', (message) => {
             this.UI.listMessages([message], false);
         });
+
         // réception de plusieurs messages (changement de channels)
         this.socket.on('server:messages:send', (messages) => {
             this.UI.listMessages(messages, true);
@@ -34,6 +35,12 @@ export default class ClientChat {
         // Ecoute le retour de la liste complete des utilisateurs
         // socket.on('server:user:list', (users) => this.UI.listingUsers(users)); // (equivalent à la ligne ci dessous)
         this.socket.on('server:user:list', this.UI.listingUsers);
+
+        // Ecoute des utilisateurs entrain de saisir
+        this.socket.on('server:user:typing_list', (users) => {
+            this.UI.listUsersTyping(users);
+        });
+
     }
 
     //----------------------------------------------------------
@@ -51,6 +58,11 @@ export default class ClientChat {
         document.addEventListener('local:message:send', (e) => {
             this.socket.emit('client:message:send', e.detail.message);
         });
+
+        document.addEventListener('local:message:typing', (event) => {
+            this.socket.emit('client:message:typing', event.detail.status);
+        });
+
 
         document.addEventListener('local:channel:change', (event) => {
             this.socket.emit('client:channel:change', event.detail.channel);

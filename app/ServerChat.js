@@ -32,6 +32,9 @@ export default class ServerChat {
         socket.on('disconnect', () => this.disconnectSocket(socket));
         // écouteur d'évenement sur le changement de channel
         socket.on('client:channel:change', this.joinChannel.bind(this, socket));
+        // saisie des utilisateurs
+        socket.on('client:message:typing', this.userTypingChannel.bind(this, socket));
+
     }
 
     joinChannel(socket, channelName) {
@@ -72,6 +75,18 @@ export default class ServerChat {
         });
     }
 
+    userTypingChannel(socket, status) {
+      // on met à jours le statut de l'utilisateur
+      socket.user.isTyping = status;
+      // on envoi l'information aux utilisateurs du même salon
+      this.io.in(socket.user.channel).emit(
+          'server:user:typing_list',
+          // on filtre les utilisateurs du channel en train de saisir
+          this.users.filter(user =>
+              (user.channel == socket.user.channel && user.isTyping)
+          ).map(user => user.pseudo)
+        );
+    }
 
     choicePseudo(socket, pseudo) {
         // vérifie si le pseudo existe déjà dans notre liste d'utilisateur
